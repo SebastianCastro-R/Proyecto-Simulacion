@@ -145,10 +145,14 @@ def lanzar_taylor():
     def procesar_datos():
         try:
             fx = sym.sympify(entradas["funcion"].get())
-            x0 = float(entradas["x0"].get())
-            xi = float(entradas["xi"].get())
+            x0_expr = sym.sympify(entradas["x0"].get())
+            xi_expr = sym.sympify(entradas["xi"].get())
             n = int(entradas["n"].get())
-            polinomio = politaylor(fx, x0, n)
+
+            # Conversión para funciones que usan float/NumPy
+            x0 = float(x0_expr)
+            xi = float(xi_expr)
+            polinomio = politaylor(fx, x0_expr, n)
 
             # Actualiza los botones con las funciones correctas
             for b in botones_opciones:
