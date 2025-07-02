@@ -8,10 +8,9 @@ y = sym.Function('y')
 
 def diferencias_finitas_edo2():
     print("\n--- MÉTODO DE DIFERENCIAS FINITAS PARA EDO DE SEGUNDO ORDEN ---")
-    print("Ingrese la ecuación en forma: y'' = expresión (por ejemplo: y' + 2*y + cos(x))")
 
     # Entrada de datos
-    f_expr_str = input("Ingrese el lado derecho de la ecuación (sin y'' = ): ")
+    f_expr_str = input("Ingrese el lado derecho de la ecuación: y'' ")
 
     # Reemplazar notaciones comunes para sympy
     f_expr_str = f_expr_str.replace("y'", "Derivative(y(x), x)")  # y' → Derivada
@@ -23,11 +22,11 @@ def diferencias_finitas_edo2():
         print("\n❌ Error al interpretar la expresión:", e)
         return
 
-    a = float(sym.sympify(input("Ingrese el extremo izquierdo del intervalo (a): ")))
-    b = float(sym.sympify(input("Ingrese el extremo derecho del intervalo (b): ")))
-    h = float(sym.sympify(input("Ingrese el valor del paso h: ")))
-    alpha = float(sym.sympify(input(f"Ingrese la condición y({a}) = ")))
-    beta = float(sym.sympify(input(f"Ingrese la condición y({b}) = ")))
+    a = float(sym.sympify(input("➡️ Ingrese el extremo izquierdo del intervalo (a): ")))
+    b = float(sym.sympify(input("➡️ Ingrese el extremo derecho del intervalo (b): ")))
+    h = float(sym.sympify(input("➡️ Ingrese el valor del paso h: ")))
+    alpha = float(sym.sympify(input(f"➡️ Ingrese la condición y({a}) = : ")))
+    beta = float(sym.sympify(input(f"➡️ Ingrese la condición y({b}) = : ")))
 
     # Número de puntos internos
     n = int((b - a) / h) - 1

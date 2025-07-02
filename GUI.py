@@ -54,7 +54,7 @@ def lanzar_taylor():
     centrar_ventana(ventana, 1000, 600)
     ventana.resizable(False, False)
     ventana.protocol("WM_DELETE_WINDOW", lambda: (ventana.destroy(), root.deiconify()))
-
+    
     # TÍTULO
     ctk.CTkLabel(ventana, text="Ingrese los Datos:", font=FUENTE_TITULO, fg_color="white", text_color='black').pack(pady=15)
 
@@ -185,7 +185,7 @@ def lanzar_newton():
     ventana = ctk.CTkToplevel()
     ventana.title("Método de Newton-Raphson")
     ventana.configure(fg_color="white")
-    ventana.geometry("1200x700")  # tamaño más amplio
+    centrar_ventana(ventana, 1200, 700)
     ventana.resizable(False, False)
     ventana.protocol("WM_DELETE_WINDOW", lambda: (ventana.destroy(), root.deiconify()))
 
@@ -242,10 +242,12 @@ def lanzar_newton():
             b = float(entradas["b"].get())
             n = int(entradas["n"].get())
 
-            xr, yr = NewtonRaphson(f, df, x1, emax, imax)
+            xr, yr, tabla = NewtonRaphson(f, df, x1, emax, imax)
 
             messagebox.showinfo("Resultado",
                 f"Raíz aproximada: {xr:.6f}\nf({xr:.6f}) = {yr:.6e}")
+
+            mostrar_tabla_iteraciones(tabla)
 
             if messagebox.askyesno("Gráfica", "¿Deseas ver la gráfica de f(x)?"):
                 graficar_newton_raphson(f, xr, yr, a, b, n, fx_expr)
@@ -274,11 +276,9 @@ def lanzar_lagrange():
     ventana.resizable(False, False)
     ventana.protocol("WM_DELETE_WINDOW", lambda: (ventana.destroy(), root.deiconify()))
 
-    # CONTENEDOR PRINCIPAL
     contenedor = ctk.CTkFrame(ventana, fg_color="white")
     contenedor.pack(fill="both", expand=True)
 
-    # FORMULARIO A LA IZQUIERDA
     izquierdo = ctk.CTkFrame(contenedor, fg_color="white")
     izquierdo.pack(side="left", fill="both", expand=True)
 
@@ -294,67 +294,39 @@ def lanzar_lagrange():
                              font=("Arial", 16), corner_radius=12)
     entrada_f.pack(pady=10)
 
-    ctk.CTkLabel(formulario, text="Restricción g(x, y) = 0:",
+    ctk.CTkLabel(formulario, text="Restricción g(x, y) = c:",
                  font=FUENTE_TEXTO, text_color='black').pack(anchor="w")
     entrada_g = ctk.CTkEntry(formulario, width=300, height=40,
                              font=("Arial", 16), corner_radius=12)
     entrada_g.pack(pady=10)
 
+    ctk.CTkLabel(formulario, text="Constante c:", font=FUENTE_TEXTO, text_color='black').pack(anchor="w")
+    entrada_c = ctk.CTkEntry(formulario, width=300, height=40,
+                             font=("Arial", 16), corner_radius=12)
+    entrada_c.pack(pady=10)
+
     def ejecutar_lagrange():
-        from langrage import graficar_lagrange
-        import sympy as sp
         try:
-            f_expr = entrada_f.get()
-            g_expr = entrada_g.get()
+            import LANGRAGE_POLINOMIO_TAYLOR as lagr
+            from importlib import reload
+            reload(lagr)  # Recargar por si se está ejecutando muchas veces desde GUI
 
-            x, y, λ = sp.symbols('x y λ')
-            f = sp.sympify(f_expr)
-            g = sp.sympify(g_expr)
+            # Pasar valores ingresados a variables de ese script
+            lagr.input_override = {
+                "f": entrada_f.get(),
+                "g": entrada_g.get(),
+                "c": entrada_c.get(),
+            }
 
-            df_dx = sp.diff(f, x)
-            df_dy = sp.diff(f, y)
-            dg_dx = sp.diff(g, x)
-            dg_dy = sp.diff(g, y)
-
-            eq1 = sp.Eq(df_dx, λ * dg_dx)
-            eq2 = sp.Eq(df_dy, λ * dg_dy)
-            eq3 = sp.Eq(g, 0)
-
-            soluciones = sp.solve([eq1, eq2, eq3], (x, y, λ), dict=True)
-
-            puntos_criticos = []
-            for sol in soluciones:
-                x_val = sol[x]
-                y_val = sol[y]
-                if x_val.is_real and y_val.is_real:
-                    puntos_criticos.append((float(x_val), float(y_val)))
-
-            if not puntos_criticos:
-                messagebox.showinfo("Resultado", "No se encontraron puntos críticos reales.")
-                return
-
-            valores_f = [f.subs({x: p[0], y: p[1]}).evalf() for p in puntos_criticos]
-            maximo = max(valores_f)
-            minimo = min(valores_f)
-
-            maximos = [p for p, v in zip(puntos_criticos, valores_f) if v == maximo]
-            minimos = [p for p, v in zip(puntos_criticos, valores_f) if v == minimo]
-
-            msg = f"Valor máximo: {maximo:.4f} en:\n" + "\n".join([f"({p[0]:.4f}, {p[1]:.4f})" for p in maximos])
-            msg += f"\n\nValor mínimo: {minimo:.4f} en:\n" + "\n".join([f"({p[0]:.4f}, {p[1]:.4f})" for p in minimos])
-            messagebox.showinfo("Resultados", msg)
-
-            if messagebox.askyesno("Gráfica", "¿Deseas ver la gráfica 3D?"):
-                graficar_lagrange(f, g, puntos_criticos)
+            lagr.run_desde_gui(entrada_f.get(), entrada_g.get(), float(entrada_c.get()))
 
         except Exception as e:
-            messagebox.showerror("Error", f"Datos inválidos:\n{e}")
+            messagebox.showerror("Error", f"Ocurrió un error al ejecutar: {e}")
 
     def volver():
         ventana.destroy()
         root.deiconify()
 
-    # BOTONES
     ctk.CTkButton(formulario, text="Calcular", command=ejecutar_lagrange,
                   fg_color=AZUL, hover_color=CELESTE, text_color='white',
                   width=200, height=50, font=("Arial", 16, "bold"),
@@ -365,7 +337,6 @@ def lanzar_lagrange():
                   width=200, height=50, font=("Arial", 16, "bold"),
                   corner_radius=10).pack()
 
-    # IMAGEN A LA DERECHA
     derecho = ctk.CTkFrame(contenedor, fg_color="white", width=500)
     derecho.pack(side="right", fill="both", expand=False)
 
@@ -695,15 +666,32 @@ def lanzar_minimos_cuadrados():
     ctk.CTkLabel(formulario, text="Tipo de ajuste:", font=FUENTE_TEXTO, text_color='black').pack(anchor="w", pady=(10, 0))
     tipo_var = ctk.StringVar(value="lineal")
     opciones = ["lineal", "polinómico", "exponencial", "simbolico"]
-    ctk.CTkOptionMenu(formulario, values=opciones, variable=tipo_var,
-                      width=300, height=40, font=("Arial", 16),
-                      fg_color=AZUL, text_color="white").pack(pady=10)
+
+    def actualizar_visibilidad_modelo(opcion):
+        if opcion == "simbolico":
+            label_modelo.pack(anchor="w", pady=(5, 0))
+            modelo_entry.pack(pady=(0, 10))
+        else:
+            label_modelo.pack_forget()
+            modelo_entry.pack_forget()
+
+    menu_tipos = ctk.CTkOptionMenu(
+        formulario,
+        values=opciones,
+        variable=tipo_var,
+        command=actualizar_visibilidad_modelo,
+        width=300, height=40, font=("Arial", 16),
+        fg_color=AZUL, text_color="white"
+    )
+    menu_tipos.pack(pady=10)
 
     ctk.CTkLabel(formulario, text="(Opcional) Grado polinómico:", font=FUENTE_TEXTO, text_color='black').pack(anchor="w")
     grado_entry = ctk.CTkEntry(formulario, width=100, height=40, font=("Arial", 16), corner_radius=10)
     grado_entry.pack(pady=10)
 
-    # FUNCIONES
+    label_modelo = ctk.CTkLabel(formulario, text="Modelo simbólico:", font=FUENTE_TEXTO, text_color='black')
+    modelo_entry = ctk.CTkEntry(formulario, width=400, height=40, font=("Arial", 16), corner_radius=10)
+
     def ejecutar_ajuste():
         from minimos_cuadrados import ajuste_lineal, ajuste_polinomico, ajuste_exponencial, ajuste_simbolico_manual
         try:
@@ -727,7 +715,15 @@ def lanzar_minimos_cuadrados():
                 mostrar_grafico_exponencial(x, y, modelo, a, b, ecm)
 
             elif tipo == "simbolico":
-                ajuste_simbolico_manual(x, y)
+                modelo = modelo_entry.get().strip()
+                if not modelo:
+                    messagebox.showwarning("Advertencia", "Por favor ingrese un modelo simbólico.")
+                    return
+                modelo_ajustado, ecm = ajuste_simbolico_manual(x, y, modelo)
+                messagebox.showinfo("Resultado",
+                    f"✅ Modelo ajustado:\n"
+                    f"  ➤ y = {modelo_ajustado}\n"
+                    f"  ➤ Error cuadrático medio (ECM): {ecm:.6e}")
 
         except Exception as e:
             messagebox.showerror("Error", f"❌ Error en datos:\n{e}")
@@ -759,7 +755,6 @@ def lanzar_minimos_cuadrados():
         ventana.destroy()
         root.deiconify()
 
-    # BOTONES
     ctk.CTkButton(formulario, text="Calcular", command=ejecutar_ajuste,
                   width=200, height=50, font=("Arial", 16, "bold"),
                   fg_color=AZUL, hover_color=CELESTE, text_color='black').pack(pady=20)
@@ -768,23 +763,79 @@ def lanzar_minimos_cuadrados():
                   width=200, height=50, font=("Arial", 16, "bold"),
                   fg_color=AZUL, hover_color=CELESTE, text_color='black').pack()
 
-    # --- IMAGEN A LA DERECHA ---
+    # IMAGEN A LA DERECHA
     derecho = ctk.CTkFrame(contenedor, fg_color="white", width=500)
     derecho.pack(side="right", fill="both", expand=False)
 
     imagen = ctk.CTkImage(Image.open("Images/math.jpeg"), size=(500, 600))
     ctk.CTkLabel(derecho, image=imagen, text="").pack(fill="both", expand=True)
 
+def mostrar_tabla_iteraciones(tabla):
+    ventana_tabla = ctk.CTkToplevel()
+    ventana_tabla.title("Tabla de Iteraciones - Newton-Raphson")
+    ventana_tabla.geometry("950x400")
+    ventana_tabla.configure(fg_color="white")
+
+    contenedor_tabla = ctk.CTkScrollableFrame(ventana_tabla, fg_color="white")
+    contenedor_tabla.pack(fill="both", expand=True, padx=10, pady=10)
+
+    headers = ["Iteración", "x", "f'(x)", "f(x)", "Error abs", "Error rel (%)"]
+    for j, h in enumerate(headers):
+        ctk.CTkLabel(contenedor_tabla, text=h, font=("Arial", 13, "bold"),
+                     width=150, text_color="black").grid(row=0, column=j, padx=5, pady=5)
+
+    for i, fila in enumerate(tabla):
+        for j, valor in enumerate(fila):
+            if valor is None:
+                texto = "--"
+            elif isinstance(valor, float):
+                texto = f"{valor:.6f}"
+            else:
+                texto = str(valor)
+            ctk.CTkLabel(contenedor_tabla, text=texto, font=("Arial", 12),
+                         width=150, text_color="black").grid(row=i+1, column=j, padx=5, pady=3)
+
+def run_desde_gui(f_expr_str, g_expr_str, c_val):
+    global input  # Para que no pida input por consola
+    original_input = input
+
+    def input_simulada(prompt):
+        if "función objetivo" in prompt.lower():
+            return f_expr_str
+        elif "restricción" in prompt.lower() and "c" not in prompt.lower():
+            return g_expr_str
+        elif "valor 'c'" in prompt.lower():
+            return str(c_val)
+        elif "¿cuántos puntos iniciales" in prompt.lower():
+            return "3"
+        elif "guess" in prompt.lower():
+            return "1 1 1"
+        elif "salir" in prompt.lower():
+            return "s"
+        elif "orden del polinomio" in prompt.lower():
+            return "2"
+        elif "elige el índice" in prompt.lower():
+            return "0"
+        return ""
+
+    input = input_simulada
+    try:
+        exec(open(__file__, encoding="utf-8").read(), globals())
+    finally:
+        input = original_input
+
+
 #? Crear ventana principal
 root = ctk.CTk()
 root.title("Simulación")
 root.configure(fg_color="white")
-# Obtener tamaño de pantalla
-ancho_pantalla = root.winfo_screenwidth()
-alto_pantalla = root.winfo_screenheight()
+# Tamaño deseado de la ventana principal
+ANCHO = 1380  
+ALTO = 720
 
-# Establecer tamaño de la ventana igual al de la pantalla
-root.geometry(f"{ancho_pantalla}x{alto_pantalla}")
+# Centrar la ventana principal en pantalla
+centrar_ventana(root, ANCHO, ALTO)
+
 
 # Título principal
 titulo = ctk.CTkLabel(root, text="Simulación y Computación Numérica", font=FUENTE_TITULO, fg_color="white", text_color='black')

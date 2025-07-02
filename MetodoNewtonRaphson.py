@@ -19,7 +19,8 @@ def NewtonRaphson(f, df, x1, es, imax):
     i = 0
     Newton_table = []
 
-    Newton_table.append([i, x, df(x), f(x), "--", "--"])
+    # Primera fila (sin error todavía)
+    Newton_table.append([i, x, df(x), f(x), None, None])
     xv.append(x)
 
     while ea > es and i < imax:
@@ -31,13 +32,20 @@ def NewtonRaphson(f, df, x1, es, imax):
             ea = abs(xv[i] - xv[i - 1])
             er = abs((xv[i] - xv[i - 1]) / xv[i]) * 100
         else:
-            er = "--"
+            ea = None
+            er = None
 
         Newton_table.append([i, x, df(x), f(x), ea, er])
 
+    # Impresión opcional (consola)
     print("\nMétodo Newton-Raphson")
-    print(tabulate(Newton_table, headers=["Iteración", "x", "f'(x)", "f(x)", "e abs", "er (%)"]))
-    return x, f(x)
+    print(tabulate(
+        [[i, x, dx, fx, f"{ea:.6f}" if ea else "--", f"{er:.6f}" if er else "--"]
+         for i, x, dx, fx, ea, er in Newton_table],
+        headers=["Iteración", "x", "f'(x)", "f(x)", "e abs", "er (%)"]
+    ))
+
+    return x, f(x), Newton_table
 
 def graficar_newton_raphson(f, xr, yr, a, b, n, fx_expr):
     x_vals = np.linspace(a, b, n)

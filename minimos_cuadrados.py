@@ -24,22 +24,23 @@ def ajuste_exponencial(x, y):
     ecm = np.mean((modelo(x) - y) ** 2)
     return modelo, ecm, a, b
 
-def ajuste_simbolico_manual(x_data, y_data):
+def ajuste_simbolico_manual(x_data, y_data, modelo_input):
+    import numpy as np
+    import sympy as sym
+    import matplotlib.pyplot as plt
+
     x = sym.Symbol('x')
-    modelo_input = input("\nIngrese el modelo (ej. a/x + b/sqrt(x)): ")
 
     try:
         expr = sym.sympify(modelo_input, locals={'sqrt': sym.sqrt})
     except Exception as e:
         print(f"❌ Error al interpretar la expresión: {e}")
-        return
+        return "Error", None
 
     coeficientes = sorted(expr.free_symbols - {x}, key=lambda s: str(s))
     if not coeficientes:
         print("❌ No se detectaron parámetros (como 'a', 'b') en la expresión.")
-        return
-
-    print(f"Parámetros detectados: {[str(c) for c in coeficientes]}")
+        return "Sin parámetros detectados", None
 
     A = []
     for xi in x_data:
@@ -55,7 +56,7 @@ def ajuste_simbolico_manual(x_data, y_data):
         solucion = np.linalg.solve(AtA, Aty)
     except np.linalg.LinAlgError:
         print("❌ El sistema no tiene solución única.")
-        return
+        return "Sistema sin solución única", None
 
     modelo_final = expr
     for c, v in zip(coeficientes, solucion):
@@ -65,24 +66,30 @@ def ajuste_simbolico_manual(x_data, y_data):
     y_aprox = f_lamb(np.array(x_data))
     ecm = np.mean((y_aprox - y_data) ** 2)
 
+    modelo_simplificado = sym.simplify(modelo_final)
+
+    # Imprimir por consola (opcional)
     print("\n✅ Modelo ajustado:")
-    print(f"  ➤ y = {sym.simplify(modelo_final)}")
-    print(f"  ➤ Error cuadrático medio (ECM): {ecm:.6e}")
+    print(f"  ➔ y = {modelo_simplificado}")
+    print(f"  ➔ Error cuadrático medio (ECM): {ecm:.6e}")
 
-    ver = input("\n¿Desea ver la gráfica? (s/n): ").lower()
-    if ver == 's':
-        x_vals = np.linspace(min(x_data), max(x_data), 300)
-        y_vals = f_lamb(x_vals)
+    # Gráfica
+    x_vals = np.linspace(min(x_data), max(x_data), 300)
+    y_vals = f_lamb(x_vals)
 
-        plt.scatter(x_data, y_data, color='red', label='Datos')
-        plt.plot(x_vals, y_vals, color='black', label='Modelo ajustado')
-        plt.title('Ajuste por Modelo Simbólico')
-        plt.xlabel('x')
-        plt.ylabel('y')
-        plt.legend()
-        plt.grid(True)
-        plt.show()
+    plt.scatter(x_data, y_data, color='red', label='Datos')
+    plt.plot(x_vals, y_vals, color='black', label='Modelo ajustado')
+    plt.title('Ajuste por Modelo Simbólico')
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
 
+    # Devolver para mostrar en la GUI
+    return str(modelo_simplificado), ecm
+   
+    
 def menu_minimos_cuadrados():
     print("\n" + "-" * 50)
     print("         APROXIMACIÓN POR MÍNIMOS CUADRADOS")

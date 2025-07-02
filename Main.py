@@ -26,82 +26,135 @@ def ejecutar_gui():
         print(f"\n❌ Error al iniciar la interfaz gráfica: {e}")
 
 def ejecutar_terminal():
-    print("\n" + "="*50)
-    print("   MÉTODOS DISPONIBLES EN MODO TERMINAL")
-    print("="*50)
-    print("  1. Método de Taylor")
-    print("  2. Método de Newton-Raphson")
-    print("  3. Método de Lagrange")
-    print("  4. Operaciones Binarias")
-    print("  5. Método de Bisección")
-    print("  6. Diferencias Finitas")
-    print("  7. Mínimos Cuadrados")
-    print("  0. Volver al menú principal")
-    print("="*50)
-
     while True:
-        opcion = input("Selecciona una opción: ")
+        print("----------------------------------------------")
+        print("---------------- MENÚ PRINCIPAL --------------")
+        print("----------------------------------------------")
+        print("1. Método de Taylor")
+        print("2. Método de Newton-Raphson")
+        print("3. Método de Lagrange")
+        print("4. Operaciones con números binarios")
+        print("5. Método de Bisección")
+        print("6. Diferencias Finitas (EDO 2º Orden)")
+        print("7. Mínimos Cuadrados")
+        print("0. Salir")
+        print("----------------------------------------------")
+        opcion = input("Seleccione una opción: ")
+        print("----------------------------------------------")
+        
         if opcion == '1':
-            from PolinomioTaylor import politaylor, mostrar_polinomio, calcular_error_real, cota_error_maximo, buscar_grado_para_error, graficar
-            # Aquí puedes pedir inputs manuales y usar las funciones
-            print("🔧 Este módulo está diseñado principalmente para la GUI.")
+            fx_input = input("Ingrese la función f(x): ")
+            x0_input = input("Ingrese el valor de x0 (punto de referencia): ")
+            xi_input = input("Ingrese el valor de xi (donde se evalúa la aproximación): ")
+            try:
+                fx = sym.sympify(fx_input)
+                x0 = float(sym.sympify(x0_input))
+                xi = float(sym.sympify(xi_input))
+                n = int(input("Ingrese el grado del polinomio de Taylor (entero): "))
+                submenu_taylor(fx, x0, xi, n)
+            except Exception as e:
+                print("Error en los datos:", e)
         elif opcion == '2':
-            from MetodoNewtonRaphson import convertir_funcion, NewtonRaphson, graficar_newton_raphson
-            fx_str = input("Ingrese la función f(x): ")
-            x0 = float(input("Ingrese el valor inicial: "))
-            tol = float(input("Ingrese la tolerancia: "))
-            imax = int(input("Ingrese el número máximo de iteraciones: "))
-            f, df, fx_expr = convertir_funcion(fx_str)
-            xr, yr = NewtonRaphson(f, df, x0, tol, imax)
-            graficar_newton_raphson(f, xr, yr, x0-5, x0+5, 100, fx_expr)
+            print("\n--- Parámetros para el método de Newton-Raphson ---")
+            try:
+                funcion_str = input("Ingrese la función f(x): ")
+                f, df, fx_expr = convertir_funcion(funcion_str)
+
+                a = float(input("Ingresa el valor inicial del rango de x (a): ") or -1)
+                b = float(input("Ingresa el valor final del rango de x (b): ") or 10)
+                n = int(input("Ingresa la cantidad de puntos para graficar (n): ") or 50)
+
+                emax = float(input("Ingresa el error máximo permitido: ") or 0.001)
+                itermax = int(input("Ingresa el número máximo de iteraciones: ") or 20)
+                x1 = float(input("Ingresa el valor inicial x1 para Newton-Raphson: ") or 0)
+
+                xr, yr = NewtonRaphson(f, df, x1, emax, itermax)
+
+                ver_grafica = input("¿Deseas ver la gráfica? (s/n): ").lower()
+                if ver_grafica == 's':
+                    graficar_newton_raphson(f, xr, yr, a, b, n, fx_expr)
+
+            except Exception as e:
+                print("Error en los datos ingresados:", e)
         elif opcion == '3':
-            
-            f, g, puntos = lagrange()
-            if puntos:
-                graficar_lagrange(f, g, puntos)
+            print("\n--- Método de Lagrange para máximos y mínimos ---")
+            try:
+                f, g, puntos_criticos = lagrange()
+                if puntos_criticos:
+                    ver_grafica = input("¿Deseas ver la gráfica 3D? (s/n): ").lower()
+                    if ver_grafica == 's':
+                        graficar_lagrange(f, g, puntos_criticos)
+
+            except Exception as e:
+                print("Ocurrió un error al ejecutar el método de Lagrange:", e)
+
         elif opcion == '4':
-            import Binarios as bin
-            print("Opciones:")
-            print("  1. Decimal a Binario")
-            print("  2. Binario a Decimal")
-            print("  3. Sumar binarios")
-            print("  4. Restar binarios")
-            print("  5. Multiplicar binarios")
-            print("  6. Dividir binarios")
-            subop = input("Elige una opción: ")
-            if subop == '1':
-                n = int(input("Ingrese un número decimal: "))
-                print(f"Binario: {bin.decimal_a_binario(n)}")
-            elif subop == '2':
-                b = input("Ingrese un número binario: ")
-                print(f"Decimal: {bin.binario_a_decimal(b)}")
-            elif subop in ['3', '4', '5', '6']:
-                b1 = input("Ingrese binario 1: ")
-                b2 = input("Ingrese binario 2: ")
-                if subop == '3':
-                    print(f"Resultado: {bin.sumar_binarios(b1, b2)}")
-                elif subop == '4':
-                    print(f"Resultado: {bin.restar_binarios(b1, b2)}")
-                elif subop == '5':
-                    print(f"Resultado: {bin.multiplicar_binarios(b1, b2)}")
-                elif subop == '6':
-                    print(f"Resultado: {bin.dividir_binarios(b1, b2)}")
+            while True:
+                print("----------------------------------------------")
+                print("------ OPERACIONES CON NÚMEROS BINARIOS ------")
+                print("----------------------------------------------")
+                print("1. Decimal a Binario")
+                print("2. Binario a Decimal")
+                print("3. Sumar Binarios")
+                print("4. Restar Binarios")
+                print("5. Multiplicar Binarios")
+                print("6. Dividir Binarios")
+                print("7. Volver al menú principal")
+                print("----------------------------------------------")
+                opcion_bin = input("Selecciona una opción: ")
+                print("----------------------------------------------")
+
+                if opcion_bin == '1':
+                    dec = int(input("Ingrese un número decimal: "))
+                    print("Binario:", Binarios.decimal_a_binario(dec))
+                elif opcion_bin == '2':
+                    binario = input("Ingrese un número binario: ")
+                    print("Decimal:", Binarios.binario_a_decimal(binario))
+                elif opcion_bin == '3':
+                    b1 = input("Primer binario: ")
+                    b2 = input("Segundo binario: ")
+                    print("Suma:", Binarios.sumar_binarios(b1, b2))
+                elif opcion_bin == '4':
+                    b1 = input("Minuendo binario: ")
+                    b2 = input("Sustraendo binario: ")
+                    print("Resta:", Binarios.restar_binarios(b1, b2))
+                elif opcion_bin == '5':
+                    b1 = input("Primer binario: ")
+                    b2 = input("Segundo binario: ")
+                    print("Producto:", Binarios.multiplicar_binarios(b1, b2))
+                elif opcion_bin == '6':
+                    b1 = input("Dividendo binario: ")
+                    b2 = input("Divisor binario: ")
+                    print("Cociente:", Binarios.dividir_binarios(b1, b2))
+                elif opcion_bin == '7':
+                    break
+                else:
+                    print("Opción inválida.")
         elif opcion == '5':
+            print("\n--- MÉTODO DE BISECCIÓN ---")
             from Biseccion import metodo_biseccion, graficar_biseccion
-            f = input("Ingrese la función f(x): ")
-            a = float(input("Ingrese el valor a: "))
-            b = float(input("Ingrese el valor b: "))
-            crit = float(input("Ingrese la tolerancia: "))
-            xr, tabla = metodo_biseccion(f, a, b, crit)
-            if xr is not None:
-                graficar_biseccion(f, xr)
+            try:
+                f = input("Ingrese la función f(x): ")
+                a = float(input("Ingrese el valor a (inicio del intervalo): "))
+                b = float(input("Ingrese el valor b (fin del intervalo): "))
+                crit = float(input("Ingrese la tolerancia (error aceptado): "))
+                xr, tabla = metodo_biseccion(f, a, b, crit)
+                if xr is not None:
+                    graficar_biseccion(f, xr)
+            except Exception as e:
+                print("❌ Error:", e)
+
         elif opcion == '6':
-            
+            print("\n--- DIFERENCIAS FINITAS PARA EDO 2º ORDEN ---")
             diferencias_finitas_edo2()
+
         elif opcion == '7':
+            print("\n--- MÉTODO DE MÍNIMOS CUADRADOS ---")
             from minimos_cuadrados import menu_minimos_cuadrados
             menu_minimos_cuadrados()
+
         elif opcion == '0':
+            print("Saliendo del programa...")
             break
         else:
             print("⚠️ Opción no válida.")
