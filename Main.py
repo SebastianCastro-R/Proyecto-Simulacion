@@ -6,6 +6,8 @@ import Binarios
 from Biseccion import *
 from minimos_cuadrados import *
 from diferencias_finitas import *
+from Diferencias_divididadN import *
+from Interpolacion_Lagrange import *
 import sys
 
 def mostrar_menu():
@@ -37,6 +39,8 @@ def ejecutar_terminal():
         print("5. Método de Bisección")
         print("6. Diferencias Finitas (EDO 2º Orden)")
         print("7. Mínimos Cuadrados")
+        print("8. Interpolacion: Método Lagrange")
+        print("9. Interpolacion: Direfencias divididas de Newton ")
         print("0. Salir")
         print("----------------------------------------------")
         opcion = input("Seleccione una opción: ")
@@ -151,7 +155,10 @@ def ejecutar_terminal():
             print("\n--- MÉTODO DE MÍNIMOS CUADRADOS ---")
             from minimos_cuadrados import menu_minimos_cuadrados
             menu_minimos_cuadrados()
-
+        elif opcion ==  '8':
+            Menu_diferencias_Divididas()
+        elif opcion ==  '9':
+            interpolacion_lagrange()
         elif opcion == '0':
             print("Saliendo del programa...")
             break
