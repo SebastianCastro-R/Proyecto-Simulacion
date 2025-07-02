@@ -21,9 +21,12 @@ ctk.set_default_color_theme("blue")  # o "green", "dark-blue", etc.
 #? Colores
 AZUL = "#7986CB"   # Azul oscuro
 CELESTE = "#4DD0E1"  # Azul claro
+ROSA = "#ffc3bd"
+ROSA_HOVER = "#ff9f97"
 TEXTO = "black"
-FUENTE_TEXTO = ("Arial", 16, "bold")
-FUENTE_TITULO = ("Arial", 30, "bold")
+FUENTE_TEXTO = ("Dongle", 28)
+FUENTE_TITULO = ("Chicle", 40)
+FUENTE_SUBTITULO = ("Dongle", 40, "bold")
 ESPACIO = 15
 
 matplotlib.use("TkAgg")
@@ -55,24 +58,32 @@ def lanzar_taylor():
     ventana.resizable(False, False)
     ventana.protocol("WM_DELETE_WINDOW", lambda: (ventana.destroy(), root.deiconify()))
     
+    # Fondo de imagen
+    fondo_img = ctk.CTkImage(Image.open("Images/Wallpaper.png"), size=(1000, 600))
+    fondo_label = ctk.CTkLabel(ventana, image=fondo_img, text="")
+    fondo_label.place(relx=0, rely=0, relwidth=1, relheight=1)
+    fondo_label.lower()
+    
     # TÍTULO
-    ctk.CTkLabel(ventana, text="Ingrese los Datos:", font=FUENTE_TITULO, fg_color="white", text_color='black').pack(pady=15)
+    ctk.CTkLabel(ventana, text="Método de Taylor", font=FUENTE_TITULO, fg_color="white", text_color='black').pack(pady=10)
 
     # CONTENEDOR PRINCIPAL
     contenedor = ctk.CTkFrame(ventana, fg_color="white", corner_radius=15)
-    contenedor.pack(fill="both", expand=True, padx=40, pady=10)
-
+    contenedor.pack(pady=5)
+    
     # COLUMNA IZQUIERDA (ENTRADAS)
     columna_izquierda = ctk.CTkFrame(contenedor, fg_color="white", corner_radius=15)
-    columna_izquierda.pack(side="left", padx=40, expand=True)
+    columna_izquierda.pack(side="left", padx=20, expand=True)
+    
+    ctk.CTkLabel(columna_izquierda, text="Ingrese los Datos:", font=FUENTE_SUBTITULO, fg_color="white", text_color='black').pack(pady=5)
 
     entradas = {}
 
     def agregar_campo(texto, clave):
         frame = ctk.CTkFrame(columna_izquierda, fg_color="white", corner_radius=15)
-        frame.pack(pady=10)
+        frame.pack(pady=5)
         ctk.CTkLabel(frame, text=texto, fg_color="white", anchor="w", font=FUENTE_TEXTO, text_color='black').pack()
-        entrada = ctk.CTkEntry(frame, width=300, height=40, font=("Arial", 16), corner_radius=12)
+        entrada = ctk.CTkEntry(frame, width=250, height=40, font=("Dongle Ligth", 16), corner_radius=10)
         entrada.pack()
         entradas[clave] = entrada
 
@@ -83,11 +94,7 @@ def lanzar_taylor():
 
     # BOTONES Confirmar / Vaciar / Volver
     frame_botones_izq = ctk.CTkFrame(columna_izquierda, fg_color="white", corner_radius=15)
-    frame_botones_izq.pack(pady=25)
-
-    def vaciar_campos():
-        for campo in entradas.values():
-            campo.delete(0, ctk.END)
+    frame_botones_izq.pack(pady=5)
 
     def volver():
         ventana.destroy()
@@ -97,7 +104,7 @@ def lanzar_taylor():
         frame_botones_izq,
         text="Confirmar datos",
         command=lambda: procesar_datos(),
-        corner_radius=10, width=40, height=40,
+        corner_radius=10, width=100, height=30,
         fg_color=AZUL,
         hover_color=CELESTE,
         text_color=TEXTO,
@@ -106,40 +113,29 @@ def lanzar_taylor():
 
     ctk.CTkButton(
         frame_botones_izq,
-        text="Vaciar campos",
-        command=vaciar_campos,
-        corner_radius=10, width=40, height=40,
+        text="Volver",
+        command=volver,
+        corner_radius=10, width=100, height=30,
         fg_color=AZUL,
         hover_color=CELESTE,
         text_color=TEXTO,
         font=FUENTE_TEXTO
     ).grid(row=0, column=1, padx=10, pady=5)
 
-    ctk.CTkButton(
-        frame_botones_izq,
-        text="Volver",
-        command=volver,
-        corner_radius=10, width=40, height=40,
-        fg_color=AZUL,
-        hover_color=CELESTE,
-        text_color=TEXTO,
-        font=FUENTE_TEXTO
-    ).grid(row=1, column=0, columnspan=2, pady=10)
-
 
     # COLUMNA DERECHA (OPCIONES)
     columna_derecha = ctk.CTkFrame(contenedor, fg_color="white", corner_radius=15)
-    columna_derecha.pack(side="right", padx=40, expand=True)
+    columna_derecha.pack(side="right", padx=20, expand=True)
 
-    ctk.CTkLabel(columna_derecha, text="¿Qué deseas hacer?", font=FUENTE_TITULO, fg_color="white", text_color='black').pack(pady=10)
+    ctk.CTkLabel(columna_derecha, text="¿Qué deseas hacer?", font=FUENTE_SUBTITULO, fg_color="white", text_color='black').pack(pady=5)
 
     botones_opciones = []
 
     def crear_boton_opcion(texto, comando):
-        b = ctk.CTkButton(columna_derecha, text=texto, command=comando,font=FUENTE_TEXTO, width=40, height=40, 
+        b = ctk.CTkButton(columna_derecha, text=texto, command=comando,font=FUENTE_TEXTO, width=100, height=30, 
                           corner_radius=10, fg_color=AZUL, hover_color=CELESTE, text_color='black')
         botones_opciones.append(b)
-        b.pack(pady=10)
+        b.pack(pady=5)
 
     # Este frame se usa para actualizar las funciones al confirmar datos
     def procesar_datos():
@@ -189,16 +185,22 @@ def lanzar_newton():
     ventana = ctk.CTkToplevel()
     ventana.title("Método de Newton-Raphson")
     ventana.configure(fg_color="white")
-    centrar_ventana(ventana, 1200, 700)
+    centrar_ventana(ventana, 1000, 600)
     ventana.resizable(False, False)
     ventana.protocol("WM_DELETE_WINDOW", lambda: (ventana.destroy(), root.deiconify()))
+
+    # Fondo de imagen
+    fondo_img = ctk.CTkImage(Image.open("Images/Rosa.png"), size=(1000, 600))
+    fondo_label = ctk.CTkLabel(ventana, image=fondo_img, text="")
+    fondo_label.place(relx=0, rely=0, relwidth=1, relheight=1)
+    fondo_label.lower()
 
     ctk.CTkLabel(ventana, text="Método de Newton-Raphson", font=FUENTE_TITULO, fg_color="white", text_color='black').pack(pady=15)
 
     # CONTENEDOR GENERAL
     contenedor = ctk.CTkFrame(ventana, fg_color="white", corner_radius=15)
-    contenedor.pack(fill="both", expand=True, padx=40, pady=10)
-    contenedor.grid_columnconfigure((0, 1, 2), weight=1)
+    contenedor.pack(pady=10)
+    contenedor.grid_columnconfigure((0, 1), weight=1)
 
     # Función para agregar campos
     entradas = {}
@@ -207,32 +209,29 @@ def lanzar_newton():
         f = ctk.CTkFrame(frame, fg_color="white")
         f.pack(pady=10)
         ctk.CTkLabel(f, text=texto, font=FUENTE_TEXTO, text_color="black").pack(anchor="w")
-        entrada = ctk.CTkEntry(f, width=280, height=40, font=("Arial", 16), corner_radius=10)
+        entrada = ctk.CTkEntry(f, width=200, height=40, font=("Dongle Ligth", 16), corner_radius=10)
         entrada.pack()
         entradas[clave] = entrada
 
-    # Crear las tres columnas
+    # Crear dos columnas
     col1 = ctk.CTkFrame(contenedor, fg_color="white")
     col1.grid(row=0, column=0, padx=20, pady=10, sticky="n")
 
     col2 = ctk.CTkFrame(contenedor, fg_color="white")
     col2.grid(row=0, column=1, padx=20, pady=10, sticky="n")
 
-    col3 = ctk.CTkFrame(contenedor, fg_color="white")
-    col3.grid(row=0, column=2, padx=20, pady=10, sticky="n")
-
-    # Distribuir campos en columnas
+    # Campos en col1
     agregar_entrada(col1, "Función f(x):", "funcion")
     agregar_entrada(col1, "Valor inicial x1:", "x1")
     agregar_entrada(col1, "Error máximo permitido:", "emax")
+    agregar_entrada(col1, "Máx. iteraciones:", "imax")
 
-    agregar_entrada(col2, "Máx. iteraciones:", "imax")
+    # Campos en col2
     agregar_entrada(col2, "Límite inferior a (para gráfica):", "a")
     agregar_entrada(col2, "Límite superior b (para gráfica):", "b")
+    agregar_entrada(col2, "Cantidad de puntos (gráfica):", "n")
 
-    agregar_entrada(col3, "Cantidad de puntos (gráfica):", "n")
-
-    # Botones en la columna 3
+    # Botones en col2
     def ejecutar_newton():
         try:
             from MetodoNewtonRaphson import convertir_funcion, NewtonRaphson, graficar_newton_raphson
@@ -263,13 +262,22 @@ def lanzar_newton():
         ventana.destroy()
         root.deiconify()
 
-    ctk.CTkButton(col3, text="Calcular", command=ejecutar_newton,
-                  width=200, height=50, font=("Arial", 16, "bold"),
-                  corner_radius=10, fg_color=AZUL, hover_color=CELESTE, text_color='black').pack(pady=20)
+    # Botones
+    frame_botones = ctk.CTkFrame(col2, fg_color="white")
+    frame_botones.pack(pady=20)
 
-    ctk.CTkButton(col3, text="Volver", command=volver,
-                  text_color=TEXTO, width=200, height=50, font=("Arial", 16, "bold"),
-                  corner_radius=10, fg_color=AZUL, hover_color=CELESTE).pack(pady=10)
+    # Botón Calcular
+    ctk.CTkButton(frame_botones, text="Calcular", command=ejecutar_newton,
+                width=150, height=45, font=FUENTE_TEXTO,
+                corner_radius=10, fg_color=ROSA, hover_color=ROSA_HOVER,
+                text_color='black').grid(row=0, column=0, padx=10)
+
+    # Botón Volver
+    ctk.CTkButton(frame_botones, text="Volver", command=volver,
+                width=150, height=45, font=FUENTE_TEXTO,
+                corner_radius=10, fg_color=ROSA, hover_color=ROSA_HOVER,
+                text_color='black').grid(row=0, column=1, padx=10)
+
 
 def lanzar_lagrange():
     root.withdraw()
@@ -295,18 +303,18 @@ def lanzar_lagrange():
     ctk.CTkLabel(formulario, text="Función objetivo f(x, y):",
                  font=FUENTE_TEXTO, text_color='black').pack(anchor="w")
     entrada_f = ctk.CTkEntry(formulario, width=300, height=40,
-                             font=("Arial", 16), corner_radius=12)
+                             font=("Dongle Ligth", 16), corner_radius=12)
     entrada_f.pack(pady=10)
 
     ctk.CTkLabel(formulario, text="Restricción g(x, y) = c:",
                  font=FUENTE_TEXTO, text_color='black').pack(anchor="w")
     entrada_g = ctk.CTkEntry(formulario, width=300, height=40,
-                             font=("Arial", 16), corner_radius=12)
+                             font=("Dongle Ligth", 16), corner_radius=12)
     entrada_g.pack(pady=10)
 
     ctk.CTkLabel(formulario, text="Constante c:", font=FUENTE_TEXTO, text_color='black').pack(anchor="w")
     entrada_c = ctk.CTkEntry(formulario, width=300, height=40,
-                             font=("Arial", 16), corner_radius=12)
+                             font=("Dongle Ligth", 16), corner_radius=12)
     entrada_c.pack(pady=10)
 
     def ejecutar_lagrange():
@@ -333,18 +341,18 @@ def lanzar_lagrange():
 
     ctk.CTkButton(formulario, text="Calcular", command=ejecutar_lagrange,
                   fg_color=AZUL, hover_color=CELESTE, text_color='white',
-                  width=200, height=50, font=("Arial", 16, "bold"),
+                  width=200, height=50, font=FUENTE_TEXTO,
                   corner_radius=10).pack(pady=20)
 
     ctk.CTkButton(formulario, text="Volver", command=volver,
                   fg_color=AZUL, hover_color=CELESTE, text_color='white',
-                  width=200, height=50, font=("Arial", 16, "bold"),
+                  width=200, height=50, font=FUENTE_TEXTO,
                   corner_radius=10).pack()
 
     derecho = ctk.CTkFrame(contenedor, fg_color="white", width=500)
     derecho.pack(side="right", fill="both", expand=False)
 
-    imagen = ctk.CTkImage(Image.open("Images/math.jpeg"), size=(500, 600))
+    imagen = ctk.CTkImage(Image.open("Images/Math.jpeg"), size=(500, 600))
     ctk.CTkLabel(derecho, image=imagen, text="").pack(fill="both", expand=True)
 
 def lanzar_binarios():
@@ -387,14 +395,29 @@ def lanzar_binarios():
     ]
 
     variable_opcion = ctk.StringVar(value=opciones[0])
-    menu = ctk.CTkOptionMenu(centrado, values=opciones, variable=variable_opcion,
-                             width=300, height=40, font=("Arial", 16),
-                             fg_color=AZUL, text_color="black")
-    menu.pack(pady=10)
+    menu = ctk.CTkOptionMenu(
+        centrado,
+        values=opciones,
+        variable=variable_opcion,
+        width=300,
+        height=45,
+        corner_radius=12,
+        fg_color="gray75",  # Color de fondo del menú
+        hover=False,
+        button_color=AZUL,
+        button_hover_color=CELESTE,
+        font=("Dongle", 26),  # Más grande pero no exagerado
+        dropdown_font=("Dongle", 24),
+        dropdown_fg_color="white",
+        dropdown_hover_color=CELESTE,
+        text_color="black"
+    )
+    menu.pack(pady=15)
+
 
     # FUNCIONES AUXILIARES
     def crear_campo(placeholder):
-        entrada = ctk.CTkEntry(centrado, width=300, height=40, font=("Arial", 16), corner_radius=10)
+        entrada = ctk.CTkEntry(centrado, width=300, height=40, font=("Dongle Ligth", 16), corner_radius=10)
         entrada.insert(0, placeholder)
         entrada.bind("<FocusIn>", lambda e: entrada.delete(0, "end") if entrada.get() == placeholder else None)
         entrada.pack(pady=10)
@@ -450,11 +473,11 @@ def lanzar_binarios():
         root.deiconify()
 
     ctk.CTkButton(centrado, text="Calcular", command=operar,
-                  width=200, height=50, font=("Arial", 16, "bold"),
+                  width=200, height=50, font=FUENTE_TEXTO,
                   fg_color=AZUL, hover_color=CELESTE, text_color='black').pack(pady=20)
 
     ctk.CTkButton(centrado, text="Volver", command=volver,
-                  width=200, height=50, font=("Arial", 16, "bold"),
+                  width=200, height=50, font=FUENTE_TEXTO,
                   fg_color=AZUL, hover_color=CELESTE, text_color='black').pack()
 
 def lanzar_biseccion():
@@ -474,7 +497,7 @@ def lanzar_biseccion():
     izquierdo = ctk.CTkFrame(contenedor, fg_color="white", width=500)
     izquierdo.pack(side="left", fill="both", expand=False)
 
-    imagen_fondo = ctk.CTkImage(Image.open("Images/math.jpeg"), size=(500, 600))
+    imagen_fondo = ctk.CTkImage(Image.open("Images/Rosa2.jpg"), size=(500, 600))
     ctk.CTkLabel(izquierdo, image=imagen_fondo, text="").pack(fill="both", expand=True)
 
     # DERECHA: FORMULARIO CENTRADO
@@ -490,9 +513,9 @@ def lanzar_biseccion():
 
     def agregar_entrada(frame, texto, clave):
         fila = ctk.CTkFrame(frame, fg_color="white")
-        fila.pack(pady=10)
+        fila.pack(pady=5)
         ctk.CTkLabel(fila, text=texto, font=FUENTE_TEXTO, text_color="black").pack(anchor="w")
-        entrada = ctk.CTkEntry(fila, width=300, height=40, font=("Arial", 16), corner_radius=10)
+        entrada = ctk.CTkEntry(fila, width=300, height=40, font=("Dongle Ligth", 16), corner_radius=10)
         entrada.pack()
         entradas[clave] = entrada
 
@@ -554,17 +577,15 @@ def lanzar_biseccion():
     def volver():
         ventana.destroy()
         root.deiconify()
-        
-    tabla_scroll = None  # Para limpiar la tabla anterior si ya existe
 
     # BOTONES
     ctk.CTkButton(centrado, text="Calcular", command=ejecutar_biseccion,
-                  fg_color=AZUL, hover_color=CELESTE, text_color="black",
-                  width=200, height=50, font=("Arial", 16, "bold")).pack(pady=20)
+                  fg_color=ROSA, hover_color=ROSA_HOVER, text_color="black",
+                  width=200, height=40, font=FUENTE_TEXTO).pack(pady=20)
 
     ctk.CTkButton(centrado, text="Volver", command=volver,
-                  fg_color=AZUL, hover_color=CELESTE, text_color="black",
-                  width=200, height=50, font=("Arial", 16, "bold")).pack()
+                  fg_color=ROSA, hover_color=ROSA_HOVER, text_color="black",
+                  width=200, height=40, font=FUENTE_TEXTO).pack()
 
 def lanzar_dif_divididas(): pass
 
@@ -584,7 +605,7 @@ def lanzar_diferencias_finitas():
     izquierdo = ctk.CTkFrame(contenedor, fg_color="white", width=500)
     izquierdo.pack(side="left", fill="both", expand=False)
 
-    imagen = ctk.CTkImage(Image.open("Images/math.jpeg"), size=(500, 600))
+    imagen = ctk.CTkImage(Image.open("Images/Rosa2.jpg"), size=(500, 600))
     ctk.CTkLabel(izquierdo, image=imagen, text="").pack(fill="both", expand=True)
 
     # --- Formulario a la derecha ---
@@ -594,13 +615,13 @@ def lanzar_diferencias_finitas():
     formulario = ctk.CTkFrame(derecho, fg_color="white")
     formulario.place(relx=0.5, rely=0.5, anchor="center")
 
-    ctk.CTkLabel(formulario, text="Diferencias Finitas", font=FUENTE_TITULO, text_color="black").pack(pady=10)
+    ctk.CTkLabel(formulario, text="Diferencias Finitas", font=FUENTE_TITULO, text_color="black").pack(pady=5)
 
     # Entradas
     entradas = {}
     def entrada(texto, clave):
-        ctk.CTkLabel(formulario, text=texto, font=FUENTE_TEXTO, text_color="black").pack(anchor="w", pady=(10, 0))
-        campo = ctk.CTkEntry(formulario, width=300, height=40, font=("Arial", 16), corner_radius=10)
+        ctk.CTkLabel(formulario, text=texto, font=FUENTE_TEXTO, text_color="black").pack(anchor="w", pady=(5, 0))
+        campo = ctk.CTkEntry(formulario, width=300, height=40, font=("Dongle Ligth", 16), corner_radius=10)
         campo.pack()
         entradas[clave] = campo
         
@@ -630,13 +651,17 @@ def lanzar_diferencias_finitas():
         root.deiconify()
 
     # BOTONES
-    ctk.CTkButton(formulario, text="Calcular", command=ejecutar_diferencias_finitas,
-                  fg_color=AZUL, hover_color=CELESTE, text_color="black",
-                  width=200, height=50, font=("Arial", 16, "bold")).pack(pady=20)
+    botones_frame = ctk.CTkFrame(formulario, fg_color="white")
+    botones_frame.pack(pady=20)
 
-    ctk.CTkButton(formulario, text="Volver", command=volver,
-                  fg_color=AZUL, hover_color=CELESTE, text_color="black",
-                  width=200, height=50, font=("Arial", 16, "bold")).pack()
+    ctk.CTkButton(botones_frame, text="Calcular", command=ejecutar_diferencias_finitas,
+                fg_color=ROSA, hover_color=ROSA_HOVER, text_color="black",
+                width=150, height=40, font=FUENTE_TEXTO).pack(side="left", padx=10)
+
+    ctk.CTkButton(botones_frame, text="Volver", command=volver,
+                fg_color=ROSA, hover_color=ROSA_HOVER, text_color="black",
+                width=150, height=40, font=FUENTE_TEXTO).pack(side="left", padx=10)
+
 
 
 def lanzar_minimos_cuadrados():
@@ -667,12 +692,19 @@ def lanzar_minimos_cuadrados():
     entrada_puntos.pack(pady=10)
     entrada_puntos.insert(0, "Ej: 1,2  2,3  3,5")
 
-    ctk.CTkLabel(formulario, text="Tipo de ajuste:", font=FUENTE_TEXTO, text_color='black').pack(anchor="w", pady=(10, 0))
-    tipo_var = ctk.StringVar(value="lineal")
-    opciones = ["lineal", "polinómico", "exponencial", "simbolico"]
+    # ETIQUETA AGRUPADA
+    ctk.CTkLabel(formulario, text="Tipo de ajuste y grado polinómico:", font=FUENTE_TEXTO, text_color='black').pack(anchor="w", pady=(10, 5))
 
+    # CONTENEDOR HORIZONTAL
+    tipo_grado_frame = ctk.CTkFrame(formulario, fg_color="white")
+    tipo_grado_frame.pack(pady=10)
+
+    # MENÚ DE OPCIONES
+    tipo_var = ctk.StringVar(value="lineal")
+    opciones = ["Lineal", "Polinómico", "Exponencial", "Simbolico"]
+    
     def actualizar_visibilidad_modelo(opcion):
-        if opcion == "simbolico":
+        if opcion == "Simbolico":
             label_modelo.pack(anchor="w", pady=(5, 0))
             modelo_entry.pack(pady=(0, 10))
         else:
@@ -680,21 +712,31 @@ def lanzar_minimos_cuadrados():
             modelo_entry.pack_forget()
 
     menu_tipos = ctk.CTkOptionMenu(
-        formulario,
+        tipo_grado_frame,
         values=opciones,
         variable=tipo_var,
         command=actualizar_visibilidad_modelo,
-        width=300, height=40, font=("Arial", 16),
-        fg_color=AZUL, text_color="white"
+        width=220,
+        height=40,
+        corner_radius=12,
+        fg_color=ROSA,
+        hover=False,
+        button_color=ROSA_HOVER,
+        font=("Dongle", 26),
+        dropdown_font=("Dongle", 22),
+        dropdown_fg_color="white",
+        dropdown_hover_color=ROSA_HOVER,
+        text_color="black"
     )
-    menu_tipos.pack(pady=10)
+    menu_tipos.pack(side="left", padx=10)
 
-    ctk.CTkLabel(formulario, text="(Opcional) Grado polinómico:", font=FUENTE_TEXTO, text_color='black').pack(anchor="w")
-    grado_entry = ctk.CTkEntry(formulario, width=100, height=40, font=("Arial", 16), corner_radius=10)
-    grado_entry.pack(pady=10)
+    # CAMPO DE GRADO POLINÓMICO
+    grado_entry = ctk.CTkEntry(tipo_grado_frame, width=120, height=40, font=("Dongle Ligth", 20), corner_radius=10)
+    grado_entry.pack(side="left", padx=10)
+
 
     label_modelo = ctk.CTkLabel(formulario, text="Modelo simbólico:", font=FUENTE_TEXTO, text_color='black')
-    modelo_entry = ctk.CTkEntry(formulario, width=400, height=40, font=("Arial", 16), corner_radius=10)
+    modelo_entry = ctk.CTkEntry(formulario, width=400, height=40, font=("Dongle Ligth", 16), corner_radius=10)
 
     def ejecutar_ajuste():
         from minimos_cuadrados import ajuste_lineal, ajuste_polinomico, ajuste_exponencial, ajuste_simbolico_manual
@@ -705,20 +747,20 @@ def lanzar_minimos_cuadrados():
             y = np.array([p[1] for p in puntos])
 
             tipo = tipo_var.get()
-            if tipo == "lineal":
+            if tipo == "Lineal":
                 p, ecm = ajuste_lineal(x, y)
                 mostrar_grafico_lineal(x, y, p, ecm)
 
-            elif tipo == "polinómico":
+            elif tipo == "Polinómico":
                 grado = int(grado_entry.get())
                 p, ecm = ajuste_polinomico(x, y, grado)
                 mostrar_grafico_lineal(x, y, p, ecm)
 
-            elif tipo == "exponencial":
+            elif tipo == "Exponencial":
                 modelo, ecm, a, b = ajuste_exponencial(x, y)
                 mostrar_grafico_exponencial(x, y, modelo, a, b, ecm)
 
-            elif tipo == "simbolico":
+            elif tipo == "Simbolico":
                 modelo = modelo_entry.get().strip()
                 if not modelo:
                     messagebox.showwarning("Advertencia", "Por favor ingrese un modelo simbólico.")
@@ -759,13 +801,18 @@ def lanzar_minimos_cuadrados():
         ventana.destroy()
         root.deiconify()
 
-    ctk.CTkButton(formulario, text="Calcular", command=ejecutar_ajuste,
-                  width=200, height=50, font=("Arial", 16, "bold"),
-                  fg_color=AZUL, hover_color=CELESTE, text_color='black').pack(pady=20)
+    # CONTENEDOR HORIZONTAL PARA LOS BOTONES
+    botones_frame = ctk.CTkFrame(formulario, fg_color="white")
+    botones_frame.pack(pady=20)
 
-    ctk.CTkButton(formulario, text="Volver", command=volver,
-                  width=200, height=50, font=("Arial", 16, "bold"),
-                  fg_color=AZUL, hover_color=CELESTE, text_color='black').pack()
+    ctk.CTkButton(botones_frame, text="Calcular", command=ejecutar_ajuste,
+                width=150, height=40, font=FUENTE_TEXTO,
+                fg_color=ROSA, hover_color=ROSA_HOVER, text_color='black').pack(side="left", padx=10)
+
+    ctk.CTkButton(botones_frame, text="Volver", command=volver,
+                width=150, height=40, font=FUENTE_TEXTO,
+                fg_color=ROSA, hover_color=ROSA_HOVER, text_color='black').pack(side="left", padx=10)
+
 
     # IMAGEN A LA DERECHA
     derecho = ctk.CTkFrame(contenedor, fg_color="white", width=500)
@@ -773,6 +820,7 @@ def lanzar_minimos_cuadrados():
 
     imagen = ctk.CTkImage(Image.open("Images/math.jpeg"), size=(500, 600))
     ctk.CTkLabel(derecho, image=imagen, text="").pack(fill="both", expand=True)
+
 
 def mostrar_tabla_iteraciones(tabla):
     ventana_tabla = ctk.CTkToplevel()
@@ -796,7 +844,7 @@ def mostrar_tabla_iteraciones(tabla):
                 texto = f"{valor:.6f}"
             else:
                 texto = str(valor)
-            ctk.CTkLabel(contenedor_tabla, text=texto, font=("Arial", 12),
+            ctk.CTkLabel(contenedor_tabla, text=texto, font=("Dongle Ligth", 12),
                          width=150, text_color="black").grid(row=i+1, column=j, padx=5, pady=3)
 
 def run_desde_gui(f_expr_str, g_expr_str, c_val):
@@ -840,6 +888,11 @@ ALTO = 720
 # Centrar la ventana principal en pantalla
 centrar_ventana(root, ANCHO, ALTO)
 
+# Fondo de imagen
+fondo_img = ctk.CTkImage(Image.open("Images/Blue2.png"), size=(ANCHO, ALTO))
+fondo_label = ctk.CTkLabel(root, image=fondo_img, text="")
+fondo_label.place(relx=0, rely=0, relwidth=1, relheight=1)
+fondo_label.lower()
 
 # Título principal
 titulo = ctk.CTkLabel(root, text="Simulación y Computación Numérica", font=FUENTE_TITULO, fg_color="white", text_color='black')
@@ -872,7 +925,7 @@ metodos = [
 for i, (texto, color, funcion) in enumerate(metodos):
     hover = AZUL if color == CELESTE else CELESTE
     btn = ctk.CTkButton(frame_botones, text=texto, fg_color=color, text_color=TEXTO,
-                    width=300, height=60, font=("Arial", 18, "bold"),
+                    width=270, height=60, font=FUENTE_TEXTO,
                     command=funcion, corner_radius=10, hover_color=hover)
 
     btn.grid(row=i//4, column=i%4, padx=10, pady=10)
