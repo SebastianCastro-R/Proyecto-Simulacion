@@ -79,14 +79,13 @@ def ejecutar_terminal():
         elif opcion == '3':
             print("\n--- Método de Lagrange para máximos y mínimos ---")
             try:
-                f, g, puntos_criticos = lagrange()
-                if puntos_criticos:
-                    ver_grafica = input("¿Deseas ver la gráfica 3D? (s/n): ").lower()
-                    if ver_grafica == 's':
-                        graficar_lagrange(f, g, puntos_criticos)
-
+                import LANGRAGE_POLINOMIO_TAYLOR as lagr
+                from importlib import reload
+                reload(lagr)
+                lagr.main()  # o el nombre de tu función principal en ese archivo
             except Exception as e:
                 print("Ocurrió un error al ejecutar el método de Lagrange:", e)
+
 
         elif opcion == '4':
             while True:
