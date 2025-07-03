@@ -33,13 +33,12 @@ def ejecutar_terminal():
         print("----------------------------------------------")
         print("1. Método de Taylor")
         print("2. Método de Newton-Raphson")
-        print("3. Método de Lagrange")
-        print("4. Operaciones con números binarios")
-        print("5. Método de Bisección")
-        print("6. Diferencias Finitas (EDO 2º Orden)")
-        print("7. Mínimos Cuadrados")
-        print("8. Interpolacion: Direfencias divididas de Newton")
-        print("9. Interpolacion: Método Lagrange")
+        print("3. Operaciones con números binarios")
+        print("4. Método de Bisección")
+        print("5. Diferencias Finitas (EDO 2º Orden)")
+        print("6. Mínimos Cuadrados")
+        print("7. Interpolacion: Direfencias divididas de Newton")
+        print("8. Interpolacion: Método Lagrange")
         print("0. Salir")
         print("----------------------------------------------")
         opcion = input("Seleccione una opción: ")
@@ -79,17 +78,8 @@ def ejecutar_terminal():
 
             except Exception as e:
                 print("Error en los datos ingresados:", e)
+        
         elif opcion == '3':
-            try:
-                import LANGRAGE_POLINOMIO_TAYLOR as lagr
-                from importlib import reload
-                reload(lagr)
-                lagr.main()  # o el nombre de tu función principal en ese archivo
-            except Exception as e:
-                print("Ocurrió un error al ejecutar el método de Lagrange:", e)
-
-
-        elif opcion == '4':
             while True:
                 print("----------------------------------------------")
                 print("------ OPERACIONES CON NÚMEROS BINARIOS ------")
@@ -131,7 +121,7 @@ def ejecutar_terminal():
                     break
                 else:
                     print("Opción inválida.")
-        elif opcion == '5':
+        elif opcion == '4':
             print("\n--- MÉTODO DE BISECCIÓN ---")
             from Biseccion import metodo_biseccion, graficar_biseccion
             try:
@@ -145,17 +135,17 @@ def ejecutar_terminal():
             except Exception as e:
                 print("❌ Error:", e)
 
-        elif opcion == '6':
+        elif opcion == '5':
             print("\n--- DIFERENCIAS FINITAS PARA EDO 2º ORDEN ---")
             diferencias_finitas_edo2()
 
-        elif opcion == '7':
+        elif opcion == '6':
             print("\n--- MÉTODO DE MÍNIMOS CUADRADOS ---")
             from minimos_cuadrados import menu_minimos_cuadrados
             menu_minimos_cuadrados()
-        elif opcion ==  '8':
+        elif opcion ==  '7':
             Menu_diferencias_Divididas()
-        elif opcion ==  '9':
+        elif opcion ==  '8':
             interpolacion_lagrange()
         elif opcion == '0':
             print("Saliendo del programa...")
