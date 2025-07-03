@@ -319,18 +319,13 @@ def lanzar_lagrange():
 
     def ejecutar_lagrange():
         try:
-            import LANGRAGE_POLINOMIO_TAYLOR as lagr
+            import langrage  # Asegúrate de que el archivo se llame lagrange.py y esté en el mismo directorio
             from importlib import reload
-            reload(lagr)  # Recargar por si se está ejecutando muchas veces desde GUI
+            reload(langrage)
 
-            # Pasar valores ingresados a variables de ese script
-            lagr.input_override = {
-                "f": entrada_f.get(),
-                "g": entrada_g.get(),
-                "c": entrada_c.get(),
-            }
-
-            lagr.run_desde_gui(entrada_f.get(), entrada_g.get(), float(entrada_c.get()))
+            f_str = entrada_f.get()
+            g_str = entrada_g.get()
+            langrage.run_desde_gui(f_str, g_str)
 
         except Exception as e:
             messagebox.showerror("Error", f"Ocurrió un error al ejecutar: {e}")
