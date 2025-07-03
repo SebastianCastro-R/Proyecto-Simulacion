@@ -283,7 +283,7 @@ def lanzar_newton():
 def lanzar_lagrange():
     root.withdraw()
     ventana = ctk.CTkToplevel()
-    ventana.title("Método de Lagrange")
+    ventana.title("Interpolación de Lagrange")
     ventana.configure(fg_color="white")
     centrar_ventana(ventana, 1000, 600)
     ventana.resizable(False, False)
@@ -298,44 +298,48 @@ def lanzar_lagrange():
     formulario = ctk.CTkFrame(izquierdo, fg_color="white")
     formulario.place(relx=0.5, rely=0.5, anchor="center")
 
-    ctk.CTkLabel(formulario, text="Método de Lagrange",
+    ctk.CTkLabel(formulario, text="Interpolación de Lagrange",
                  font=FUENTE_TITULO, text_color='black').pack(pady=10)
 
-    ctk.CTkLabel(formulario, text="Función objetivo f(x, y):",
+    ctk.CTkLabel(formulario, text="Valores de xi separados por comas:",
                  font=FUENTE_TEXTO, text_color='black').pack(anchor="w")
-    entrada_f = ctk.CTkEntry(formulario, width=300, height=40,
-                             font=("Dongle Ligth", 16), corner_radius=12)
-    entrada_f.pack(pady=10)
+    entrada_xi = ctk.CTkEntry(formulario, width=300, height=40,
+                              font=("Arial", 16), corner_radius=12)
+    entrada_xi.pack(pady=10)
 
-    ctk.CTkLabel(formulario, text="Restricción g(x, y) = c:",
+    ctk.CTkLabel(formulario, text="Valores de fi separados por comas:",
                  font=FUENTE_TEXTO, text_color='black').pack(anchor="w")
-    entrada_g = ctk.CTkEntry(formulario, width=300, height=40,
-                             font=("Dongle Ligth", 16), corner_radius=12)
-    entrada_g.pack(pady=10)
+    entrada_fi = ctk.CTkEntry(formulario, width=300, height=40,
+                              font=("Arial", 16), corner_radius=12)
+    entrada_fi.pack(pady=10)
 
-    ctk.CTkLabel(formulario, text="Constante c:", font=FUENTE_TEXTO, text_color='black').pack(anchor="w")
-    entrada_c = ctk.CTkEntry(formulario, width=300, height=40,
-                             font=("Dongle Ligth", 16), corner_radius=12)
-    entrada_c.pack(pady=10)
-
-    def ejecutar_lagrange():
+    def ejecutar_interpolacion():
         try:
-            import langrage  # Asegúrate de que el archivo se llame lagrange.py y esté en el mismo directorio
+            import Interpolacion_Lagrange as il
             from importlib import reload
-            reload(langrage)
+            reload(il)
 
-            f_str = entrada_f.get()
-            g_str = entrada_g.get()
-            langrage.run_desde_gui(f_str, g_str)
+            xi = list(map(float, entrada_xi.get().split(',')))
+            fi = list(map(float, entrada_fi.get().split(',')))
+
+            if len(xi) != len(fi):
+                messagebox.showerror("Error", "Los vectores xi y fi deben tener la misma longitud.")
+                return
+
+            poli_simb, poli_simpl = il.lagrange_simbolico(xi, fi)
+            texto = f"Polinomio de Lagrange:\n{str(poli_simpl).replace('**', '^')}"
+            messagebox.showinfo("Resultado", texto)
+
+            il.graficar_polinomio(poli_simpl, xi, fi)
 
         except Exception as e:
-            messagebox.showerror("Error", f"Ocurrió un error al ejecutar: {e}")
+            messagebox.showerror("Error", f"Ocurrió un error al ejecutar:\n{e}")
 
     def volver():
         ventana.destroy()
         root.deiconify()
 
-    ctk.CTkButton(formulario, text="Calcular", command=ejecutar_lagrange,
+    ctk.CTkButton(formulario, text="Calcular", command=ejecutar_interpolacion,
                   fg_color=AZUL, hover_color=CELESTE, text_color='white',
                   width=200, height=50, font=FUENTE_TEXTO,
                   corner_radius=10).pack(pady=20)

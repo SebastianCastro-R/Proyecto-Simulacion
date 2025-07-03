@@ -1,54 +1,53 @@
-
 import sympy as sp
 import numpy as np
 import matplotlib.pyplot as plt
 import math
 
+def lagrange_simbolico(xi, fi):
+    x = sp.Symbol('x')
+    n = len(xi)
+    polinomio = 0
+
+    for i in range(n):
+        termino = 1
+        for j in range(n):
+            if i != j:
+                termino *= (x - xi[j]) / (xi[i] - xi[j])
+        polinomio += termino * fi[i]
+
+    return sp.simplify(polinomio), polinomio.expand()
+
+def graficar_polinomio(poli_simplificado, xi, fi):
+    x = sp.Symbol('x')
+    f = sp.lambdify(x, poli_simplificado, modules=['numpy'])
+
+    x_vals = np.linspace(min(xi) - 2, max(xi) + 2, 500)
+    y_vals = f(x_vals)
+
+    plt.plot(x_vals, y_vals, label="Polinomio interpolado")
+    plt.scatter(xi, fi, color='red', label="Puntos")
+    plt.title("Interpolación de Lagrange")
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.grid(True)
+    plt.legend()
+    plt.show()
+
+def calcular_cota_error(xi, grado, x_eval, derivada_max):
+    producto = 1
+    for xi_i in xi:
+        producto *= abs(x_eval - xi_i)
+    factorial = math.factorial(grado + 1)
+    error = (derivada_max / factorial) * producto
+    return error
+
 def interpolacion_lagrange():
-    def lagrange_simbolico(xi, fi):
-        x = sp.Symbol('x')
-        n = len(xi)
-        polinomio = 0
-
-        for i in range(n):
-            termino = 1
-            for j in range(n):
-                if i != j:
-                    termino *= (x - xi[j]) / (xi[i] - xi[j])
-            polinomio += termino * fi[i]
-
-        return sp.simplify(polinomio), polinomio.expand()
-
-    def calcular_cota_error(xi, grado, x_eval, derivada_max):
-        producto = 1
-        for xi_i in xi:
-            producto *= abs(x_eval - xi_i)
-        factorial = math.factorial(grado + 1)
-        error = (derivada_max / factorial) * producto
-        return error
-
     def mostrar_menu():
         print("\nElige una opción:")
         print("1. Mostrar polinomio de Lagrange (forma simbólica)")
         print("2. Mostrar gráfica")
         print("3. Mostrar cota máxima del error")
         print("4. Salir")
-
-    def graficar_polinomio(poli_simplificado, xi, fi):
-        x = sp.Symbol('x')
-        f = sp.lambdify(x, poli_simplificado, modules=['numpy'])
-
-        x_vals = np.linspace(min(xi) - 2, max(xi) + 2, 500)
-        y_vals = f(x_vals)
-
-        plt.plot(x_vals, y_vals, label="Polinomio interpolado")
-        plt.scatter(xi, fi, color='red', label="Puntos")
-        plt.title("Interpolación de Lagrange")
-        plt.xlabel("x")
-        plt.ylabel("y")
-        plt.grid(True)
-        plt.legend()
-        plt.show()
 
     def pedir_puntos():
         print("Introduce los valores de xi separados por comas (ejemplo: 6,10,13):")
@@ -91,5 +90,3 @@ def interpolacion_lagrange():
             break
         else:
             print("Opción inválida, intenta de nuevo.")
-
-
