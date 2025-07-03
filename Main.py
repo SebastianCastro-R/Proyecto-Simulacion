@@ -1,6 +1,5 @@
 from PolinomioTaylor import *
 from MetodoNewtonRaphson import *
-from langrage import *
 import sympy as sym
 import Binarios
 from Biseccion import *
@@ -39,8 +38,8 @@ def ejecutar_terminal():
         print("5. Método de Bisección")
         print("6. Diferencias Finitas (EDO 2º Orden)")
         print("7. Mínimos Cuadrados")
-        print("8. Interpolacion: Método Lagrange")
-        print("9. Interpolacion: Direfencias divididas de Newton ")
+        print("8. Interpolacion: Direfencias divididas de Newton")
+        print("9. Interpolacion: Método Lagrange")
         print("0. Salir")
         print("----------------------------------------------")
         opcion = input("Seleccione una opción: ")
@@ -81,7 +80,6 @@ def ejecutar_terminal():
             except Exception as e:
                 print("Error en los datos ingresados:", e)
         elif opcion == '3':
-            print("\n--- Método de Lagrange para máximos y mínimos ---")
             try:
                 import LANGRAGE_POLINOMIO_TAYLOR as lagr
                 from importlib import reload

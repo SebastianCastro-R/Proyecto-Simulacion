@@ -22,15 +22,39 @@ def metodo_biseccion(funcion_str, a, b, crit):
         print("\n{:^60}".format("MÉTODO DE BISECCIÓN"))
         print("{:10} {:^10} {:^10} {:^10} {:^10}".format("i", "a", "b", "xr", "ea(%)"))
 
+        # Primera iteración (i=0)
+        xr = (a + b) / 2
+        fa = f(a)
+        fxr = f(xr)
+        
+        # Guardar valores ANTES de actualizar a/b
+        tabla.append((1, a, b, xr, fxr, "-"))
+        
+        # Actualizar intervalo
+        if fa * fxr < 0:
+            b = xr
+        else:
+            a = xr
+
+        x_anterior = xr
+        i = 1
+
+        # Mostrar primera iteración en consola
+        print("{:^10} {:^10f} {:^10f} {:^10f} {:^10}".format(1, a, b, xr, "-"))
+
+        # Iteraciones siguientes
         while True:
             xr = (a + b) / 2
-            if i > 0:
-                ea = abs((xr - x_anterior) / xr)
-                error_mostrado = round(ea * 100, 9)
-            else:
-                error_mostrado = None  # primera iteración
+            fxr = f(xr)
+            fa = f(a)
+            ea = abs((xr - x_anterior) / xr)
+            error_mostrado = round(ea * 100, 9)
 
-            if f(xr) * f(a) < 0:
+            # Guardar valores ANTES de actualizar a/b
+            tabla.append((i+1, a, b, xr, fxr, error_mostrado))
+            
+            # Actualizar intervalo
+            if fa * fxr < 0:
                 b = xr
             else:
                 a = xr
@@ -38,13 +62,10 @@ def metodo_biseccion(funcion_str, a, b, crit):
             x_anterior = xr
 
             # Mostrar en consola
-            error_str = f"{error_mostrado:.6f}" if error_mostrado is not None else "-"
-            print("{:^10} {:^10f} {:^10f} {:^10f} {:^10}".format(i, a, b, xr, error_str))
+            print("{:^10} {:^10f} {:^10f} {:^10f} {:^10}".format(
+                i+1, a, b, xr, f"{error_mostrado:.6f}"))
 
-            # Guardar en tabla
-            tabla.append((i + 1, a, b, xr, f(xr), error_mostrado))
-
-            if error_mostrado is not None and error_mostrado < crit * 100:
+            if error_mostrado < crit * 100:
                 break
 
             i += 1

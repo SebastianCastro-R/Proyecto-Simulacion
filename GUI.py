@@ -11,6 +11,7 @@ from sympy import latex, nsimplify
 import matplotlib.pyplot as plt
 import matplotlib
 
+from Diferencias_divididadN import diferencias_divididas_sucesion, construir_polinomio
 from PolinomioTaylor import politaylor, mostrar_polinomio, calcular_error_real, cota_error_maximo, buscar_grado_para_error, graficar
 from diferencias_finitas import *
 from PIL import Image
@@ -587,7 +588,114 @@ def lanzar_biseccion():
                   fg_color=ROSA, hover_color=ROSA_HOVER, text_color="black",
                   width=200, height=40, font=FUENTE_TEXTO).pack()
 
-def lanzar_dif_divididas(): pass
+
+def lanzar_dif_divididas():
+    root.withdraw()
+    ventana = ctk.CTkToplevel()
+    ventana.title("Diferencias Divididas")
+    ventana.configure(fg_color="white")
+    centrar_ventana(ventana, 1000, 600)
+    ventana.resizable(False, False)
+    ventana.protocol("WM_DELETE_WINDOW", lambda: (ventana.destroy(), root.deiconify()))
+
+    contenedor = ctk.CTkFrame(ventana, fg_color="white")
+    contenedor.pack(fill="both", expand=True)
+
+    # --- Imagen a la izquierda ---
+    izquierdo = ctk.CTkFrame(contenedor, fg_color="white", width=500)
+    izquierdo.pack(side="left", fill="both", expand=False)
+
+    imagen = ctk.CTkImage(Image.open("Images/math.jpeg"), size=(500, 600))
+    ctk.CTkLabel(izquierdo, image=imagen, text="").pack(fill="both", expand=True)
+
+    # --- Formulario a la derecha ---
+    derecho = ctk.CTkFrame(contenedor, fg_color="white")
+    derecho.pack(side="right", fill="both", expand=True)
+
+    formulario = ctk.CTkFrame(derecho, fg_color="white")
+    formulario.place(relx=0.5, rely=0.5, anchor="center")
+
+    ctk.CTkLabel(formulario, text="Diferencias Divididas", font=FUENTE_TITULO, text_color="black").pack(pady=5)
+
+    # Entrada de sucesión
+    ctk.CTkLabel(formulario, text="Secuencia de valores y (separados por comas):", font=FUENTE_TEXTO, text_color="black").pack(anchor="w", pady=(10, 0))
+    entrada_y = ctk.CTkEntry(formulario, width=400, height=40, font=("Dongle Ligth", 16), corner_radius=10)
+    entrada_y.insert(0, "1, 3*2, 5**2, 7/2")
+    entrada_y.bind("<FocusIn>", lambda e: entrada_y.delete(0, "end") if entrada_y.get() == "1, 3*2, 5**2, 7/2" else None)
+    entrada_y.pack(pady=10)
+
+    def ejecutar_dif_divididas():
+        try:
+            y_vals = [eval(s.strip()) for s in entrada_y.get().split(",")]
+            x_vals = list(range(1, len(y_vals) + 1))
+
+            coef, tabla = diferencias_divididas_sucesion(x_vals, y_vals)
+            polinomio = construir_polinomio(coef, x_vals)
+
+            # Mostrar polinomio en notación LaTeX
+            mostrar_formula_latex(polinomio, titulo="Polinomio Interpolante")
+
+            # Mostrar tabla en ventana emergente
+            tabla_ventana = ctk.CTkToplevel()
+            tabla_ventana.title("Tabla de Diferencias Divididas")
+            tabla_ventana.configure(fg_color="white")
+            centrar_ventana(tabla_ventana, 600, 400)
+
+            tabla_scroll = ctk.CTkScrollableFrame(tabla_ventana, fg_color="white")
+            tabla_scroll.pack(fill="both", expand=True, padx=10, pady=10)
+            
+            # Mostrar encabezados de columnas
+            # Crear encabezados bonitos
+            for col in range(len(tabla[0])):
+                if col == 0:
+                    titulo = "xₖ / S[xₖ]"
+                else:
+                    indices = ", ".join([f"x{i}" for i in range(col + 1)])
+                    titulo = f"S[{indices}]"
+                ctk.CTkLabel(tabla_scroll, text=titulo, font=("Arial", 16, "bold"),
+                            text_color="black").grid(row=0, column=col, padx=5, pady=5, sticky="nsew")
+
+            # Agregar los valores fila por fila
+            for i, fila in enumerate(tabla):
+                for j, val in enumerate(fila):
+                    texto = f"{val:.4f}" if isinstance(val, float) else str(val)
+                    ctk.CTkLabel(tabla_scroll, text=texto, font=("Arial", 16),
+                                text_color="black").grid(row=i+1, column=j, padx=5, pady=5, sticky="nsew")
+
+            if messagebox.askyesno("Gráfica", "¿Deseas ver la gráfica?"):
+                x_plot = np.linspace(min(x_vals), max(x_vals) + 2, 300)
+                f_interp = sym.lambdify(sym.Symbol('n'), polinomio, modules=["numpy"])
+                y_plot = f_interp(x_plot)
+
+                plt.plot(x_plot, y_plot, label="Polinomio interpolante")
+                plt.scatter(x_vals, y_vals, color="red", label="Datos")
+                plt.title("Diferencias Divididas - Sucesión")
+                plt.xlabel("n")
+                plt.ylabel("S(n)")
+                plt.grid(True)
+                plt.legend()
+                plt.tight_layout()
+                plt.show()
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Ocurrió un error:\n{e}")
+
+
+    def volver():
+        ventana.destroy()
+        root.deiconify()
+
+    # Botones
+    botones_frame = ctk.CTkFrame(formulario, fg_color="white")
+    botones_frame.pack(pady=20)
+
+    ctk.CTkButton(botones_frame, text="Calcular", command=ejecutar_dif_divididas,
+                  fg_color=AZUL, hover_color=CELESTE, text_color="black",
+                  width=150, height=40, font=FUENTE_TEXTO).pack(side="left", padx=10)
+
+    ctk.CTkButton(botones_frame, text="Volver", command=volver,
+                  fg_color=AZUL, hover_color=CELESTE, text_color="black",
+                  width=150, height=40, font=FUENTE_TEXTO).pack(side="left", padx=10)
 
 def lanzar_diferencias_finitas():
     root.withdraw()
