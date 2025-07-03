@@ -96,6 +96,9 @@ def diferencias_finitas_edo2():
 
 def resolver_dif_finitas_gui(f_expr, a, b, h, alpha, beta):
     import matplotlib.pyplot as plt
+    import customtkinter as ctk
+    from tkinter import Toplevel
+
     x = sym.Symbol('x')
     y = sym.Function('y')
 
@@ -120,10 +123,23 @@ def resolver_dif_finitas_gui(f_expr, a, b, h, alpha, beta):
     x_all = np.concatenate(([a], xi, [b]))
     y_all = np.concatenate(([alpha], [float(s) for s in solucion], [beta]))
 
-    print("\n--- Solución Aproximada (GUI) ---")
-    for xi_, yi_ in zip(x_all, y_all):
-        print(f"y({xi_:.4f}) ≈ {yi_:.6f}")
+    # Mostrar resultados en ventana
+    ventana_resultado = Toplevel()
+    ventana_resultado.title("Resultado - Diferencias Finitas")
+    ventana_resultado.geometry("500x400")
+    ventana_resultado.resizable(False, False)
+    ventana_resultado.configure(bg="white")
 
+    texto = ctk.CTkTextbox(ventana_resultado, width=480, height=360, font=("Consolas", 16))
+    texto.pack(padx=10, pady=10)
+    texto.insert("end", "--- Solución Aproximada ---\n\n")
+
+    for xi_, yi_ in zip(x_all, y_all):
+        texto.insert("end", f"y({xi_:.4f}) ≈ {yi_:.6f}\n")
+
+    texto.configure(state="disabled")
+
+    # Graficar resultado
     plt.plot(x_all, y_all, 'o--', label='Aproximación', color='red')
     plt.title("Solución Aproximada por Diferencias Finitas")
     plt.xlabel("x")
