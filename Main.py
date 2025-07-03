@@ -70,7 +70,9 @@ def ejecutar_terminal():
                 itermax = int(input("Ingresa el número máximo de iteraciones: ") or 20)
                 x1 = float(input("Ingresa el valor inicial x1 para Newton-Raphson: ") or 0)
 
-                xr, yr = NewtonRaphson(f, df, x1, emax, itermax)
+                xr, yr, _ = NewtonRaphson(f, df, x1, emax, itermax)
+                print(f"\n✅ Raíz aproximada encontrada: x = {xr:.6f}, f(x) = {yr:.6f}")
+
 
                 ver_grafica = input("¿Deseas ver la gráfica? (s/n): ").lower()
                 if ver_grafica == 's':

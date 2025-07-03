@@ -113,7 +113,7 @@ def menu_minimos_cuadrados():
             print("  1. Ajuste Lineal")
             print("  2. Ajuste Polinómico")
             print("  3. Ajuste Exponencial")
-            print("  5. Ajuste por Modelo Ingresado Manualmente")
+            print("  4. Ajuste por Modelo Ingresado Manualmente")
             print("-" * 50)
             opcion = input("Opción: ")
 
@@ -170,8 +170,10 @@ def menu_minimos_cuadrados():
                     plt.grid(True)
                     plt.show()
 
-            elif opcion == '5':
-                ajuste_simbolico_manual(x, y)
+            elif opcion == '4':
+                modelo_input = input("Ingrese el modelo simbólico (por ejemplo, a*x + b): ")
+                ajuste_simbolico_manual(x, y, modelo_input)
+
 
             else:
                 print("⚠️  Opción inválida. Intente nuevamente.")
