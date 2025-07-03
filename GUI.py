@@ -320,18 +320,13 @@ def lanzar_lagrange():
 
     def ejecutar_lagrange():
         try:
-            import LANGRAGE_POLINOMIO_TAYLOR as lagr
+            import langrage  # Asegúrate de que el archivo se llame lagrange.py y esté en el mismo directorio
             from importlib import reload
-            reload(lagr)  # Recargar por si se está ejecutando muchas veces desde GUI
+            reload(langrage)
 
-            # Pasar valores ingresados a variables de ese script
-            lagr.input_override = {
-                "f": entrada_f.get(),
-                "g": entrada_g.get(),
-                "c": entrada_c.get(),
-            }
-
-            lagr.run_desde_gui(entrada_f.get(), entrada_g.get(), float(entrada_c.get()))
+            f_str = entrada_f.get()
+            g_str = entrada_g.get()
+            langrage.run_desde_gui(f_str, g_str)
 
         except Exception as e:
             messagebox.showerror("Error", f"Ocurrió un error al ejecutar: {e}")
@@ -732,24 +727,38 @@ def lanzar_diferencias_finitas():
         campo = ctk.CTkEntry(formulario, width=300, height=40, font=("Dongle Ligth", 16), corner_radius=10)
         campo.pack()
         entradas[clave] = campo
-        
-    # Entradas necesarias
-    entrada("Longitud de la barra (L):", "l")
-    entrada("Cantidad de nodos (n):", "n")
-    entrada("Temperatura inicial (T0):", "t0")
-    entrada("Temperatura final (Tf):", "tf")
-    entrada("Fuente térmica Q(x):", "q")  # Puede ser 0 o una función
+
+    # Entradas necesarias (sin valores por defecto)
+    entrada("Ecuación (lado derecho):", "eq")
+    entrada("Extremo izquierdo (a):", "a")
+    entrada("Extremo derecho (b):", "b")
+    entrada("Paso h:", "h")
+    entrada("Condición y(a):", "alpha")
+    entrada("Condición y(b):", "beta")
 
     def ejecutar_diferencias_finitas():
-        from diferencias_finitas import diferencias_finitas
         try:
-            L = float(entradas["l"].get())
-            n = int(entradas["n"].get())
-            T0 = float(entradas["t0"].get())
-            Tf = float(entradas["tf"].get())
-            Q = entradas["q"].get()
+            f_expr_str = entradas["eq"].get()
+            if not f_expr_str:
+                raise ValueError("Debe ingresar una ecuación.")
 
-            diferencias_finitas(L, n, T0, Tf, Q)
+            # Elimina caracteres raros
+            import unicodedata
+            f_expr_str = unicodedata.normalize("NFKD", f_expr_str).encode("ascii", "ignore").decode("ascii")
+
+            # Sustituciones para hacer la expresión compatible con sympy
+            f_expr_str = f_expr_str.replace("y'", "Derivative(y(x), x)")
+            f_expr_str = re.sub(r'(?<![\w_])y(?!\()', 'y(x)', f_expr_str)
+            f_expr = sym.sympify(f_expr_str)
+
+
+            a = float(sym.sympify(entradas["a"].get()))
+            b = float(sym.sympify(entradas["b"].get()))
+            h = float(sym.sympify(entradas["h"].get()))
+            alpha = float(sym.sympify(entradas["alpha"].get()))
+            beta = float(sym.sympify(entradas["beta"].get()))
+
+            resolver_dif_finitas_gui(f_expr, a, b, h, alpha, beta)
 
         except Exception as e:
             messagebox.showerror("Error", f"Datos inválidos:\n{e}")

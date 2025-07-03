@@ -2,6 +2,7 @@ import sympy as sp
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from tkinter import messagebox
 
 def lagrange():
     x, y, λ = sp.symbols('x y λ')
@@ -120,3 +121,45 @@ def graficar_lagrange(f, g, puntos_criticos):
 
     except Exception as e:
         print("\nError al graficar:", str(e))
+
+def run_desde_gui(f_str, g_str):
+    import sympy as sp
+    from tkinter import messagebox
+
+    f, g, puntos_criticos = None, None, []
+    try:
+        x, y, λ = sp.symbols('x y λ')
+        f = sp.sympify(f_str)
+        g = sp.sympify(g_str)
+
+        df_dx = sp.diff(f, x)
+        df_dy = sp.diff(f, y)
+        dg_dx = sp.diff(g, x)
+        dg_dy = sp.diff(g, y)
+
+        eq1 = sp.Eq(df_dx, λ * dg_dx)
+        eq2 = sp.Eq(df_dy, λ * dg_dy)
+        eq3 = sp.Eq(g, 0)
+
+        soluciones = sp.solve([eq1, eq2, eq3], (x, y, λ), dict=True)
+
+        resultados_texto = ""
+
+        for sol in soluciones:
+            x_val = sol[x]
+            y_val = sol[y]
+            if x_val.is_real and y_val.is_real:
+                punto = (float(x_val), float(y_val))
+                puntos_criticos.append(punto)
+                f_val = f.subs({x: punto[0], y: punto[1]}).evalf()
+                resultados_texto += f"Punto crítico en ({punto[0]:.4f}, {punto[1]:.4f}) con f = {f_val:.4f}\n"
+
+        if not puntos_criticos:
+            resultados_texto = "No se encontraron puntos críticos reales."
+
+        messagebox.showinfo("Resultados de Lagrange", resultados_texto.strip())
+
+        graficar_lagrange(f, g, puntos_criticos)
+
+    except Exception as e:
+        messagebox.showerror("Error", f"Error al ejecutar desde GUI:\n{str(e)}")
