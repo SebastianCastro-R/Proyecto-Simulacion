@@ -701,7 +701,7 @@ def lanzar_diferencias_finitas():
     ventana = ctk.CTkToplevel()
     ventana.title("Diferencias Finitas")
     ventana.configure(fg_color="white")
-    centrar_ventana(ventana, 1000, 600)
+    centrar_ventana(ventana, 1000, 700)
     ventana.resizable(False, False)
     ventana.protocol("WM_DELETE_WINDOW", lambda: (ventana.destroy(), root.deiconify()))
 
@@ -712,7 +712,7 @@ def lanzar_diferencias_finitas():
     izquierdo = ctk.CTkFrame(contenedor, fg_color="white", width=500)
     izquierdo.pack(side="left", fill="both", expand=False)
 
-    imagen = ctk.CTkImage(Image.open("Images/Rosa2.jpg"), size=(500, 600))
+    imagen = ctk.CTkImage(Image.open("Images/Rosa2.jpg"), size=(600, 700))
     ctk.CTkLabel(izquierdo, image=imagen, text="").pack(fill="both", expand=True)
 
     # --- Formulario a la derecha ---
