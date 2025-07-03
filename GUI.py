@@ -11,9 +11,9 @@ from sympy import latex, nsimplify
 import matplotlib.pyplot as plt
 import matplotlib
 
-from Diferencias_divididadN import diferencias_divididas_sucesion, construir_polinomio
-from PolinomioTaylor import politaylor, mostrar_polinomio, calcular_error_real, cota_error_maximo, buscar_grado_para_error, graficar
-from diferencias_finitas import *
+from Funciones.Diferencias_divididadN import diferencias_divididas_sucesion, construir_polinomio
+from Funciones.PolinomioTaylor import politaylor, mostrar_polinomio, calcular_error_real, cota_error_maximo, buscar_grado_para_error, graficar
+from Funciones.diferencias_finitas import *
 from PIL import Image
 
 ctk.set_appearance_mode("light")  # o "dark"
@@ -235,7 +235,7 @@ def lanzar_newton():
     # Botones en col2
     def ejecutar_newton():
         try:
-            from MetodoNewtonRaphson import convertir_funcion, NewtonRaphson, graficar_newton_raphson
+            from Funciones.MetodoNewtonRaphson import convertir_funcion, NewtonRaphson, graficar_newton_raphson
             funcion_str = entradas["funcion"].get()
             f, df, fx_expr = convertir_funcion(funcion_str)
 
@@ -423,7 +423,7 @@ def lanzar_binarios():
     entrada2 = crear_campo("Ingrese el segundo número (si aplica)")
 
     def operar():
-        from Binarios import (
+        from Funciones.Binarios import (
             decimal_a_binario,
             binario_a_decimal,
             sumar_binarios,
@@ -522,7 +522,7 @@ def lanzar_biseccion():
     agregar_entrada(centrado, "Criterio de error:", "criterio")
 
     def ejecutar_biseccion():
-        from Biseccion import metodo_biseccion, graficar_biseccion
+        from Funciones.Biseccion import metodo_biseccion, graficar_biseccion
         try:
             f_str = entradas["funcion"].get()
             a = float(entradas["a"].get())
@@ -856,7 +856,7 @@ def lanzar_minimos_cuadrados():
     modelo_entry = ctk.CTkEntry(formulario, width=400, height=40, font=("Dongle Ligth", 16), corner_radius=10)
 
     def ejecutar_ajuste():
-        from minimos_cuadrados import ajuste_lineal, ajuste_polinomico, ajuste_exponencial, ajuste_simbolico_manual
+        from Funciones.minimos_cuadrados import ajuste_lineal, ajuste_polinomico, ajuste_exponencial, ajuste_simbolico_manual
         try:
             puntos_str = entrada_puntos.get()
             puntos = [tuple(map(float, p.split(','))) for p in puntos_str.split()]

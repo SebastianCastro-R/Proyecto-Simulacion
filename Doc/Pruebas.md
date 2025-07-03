@@ -121,9 +121,9 @@ Raiz: \[\sqrt{x}=\]
 Tabla:
 ![Prueba3](Images/Ejemplos3.png "Prueba3")
 
-# Método de Newton-Raphson
+## Método de Newton-Raphson
 
-## 📌 Parámetros de entrada
+### 📌 Parámetros de entrada
 
 - **Función:** `f(x) = sin(x) - 2/(x^2 + 1)`
 - **Intervalo:** `a = -1`, `b = 10`
@@ -134,7 +134,7 @@ Tabla:
 
 ---
 
-## 📈 Iteraciones
+### 📈 Iteraciones
 
 | Iteración |    xₙ     |   f'(xₙ)    |     f(xₙ)     | Error Absoluto | Error Relativo (%) |
 |-----------|-----------|-------------|----------------|----------------|---------------------|
@@ -148,7 +148,7 @@ Tabla:
 
 ---
 
-## ✅ Resultado Final
+### ✅ Resultado Final
 
 - **Raíz aproximada:** `6.331875`
 - **f(6.331875):** `-2.931889 × 10⁻¹⁰`
@@ -160,14 +160,14 @@ Tabla:
 
 ## Método de Lagrange
 
-# Método de Mínimos Cuadrados
+## Método de Mínimos Cuadrados
 
-## 📌 Datos de entrada
+### 📌 Datos de entrada
 
 - **Cantidad de puntos:** `6`
 - **Modelo a ajustar:** `y = a/x + b/sqrt(x)`
 
-### Tabla de datos
+#### Tabla de datos
 
 | `xᵢ` | 0.1 | 0.2 | 0.4 | 0.5 | 1.0 | 2.0 |
 |------|-----|-----|-----|-----|-----|-----|
@@ -175,7 +175,7 @@ Tabla:
 
 ---
 
-## 🔁 Transformación del modelo
+### 🔁 Transformación del modelo
 
 Transformamos el modelo no lineal en uno lineal en los parámetros:
 
@@ -193,7 +193,7 @@ Aplicamos mínimos cuadrados clásicos con:
 
 ---
 
-## ✅ Modelo ajustado
+### ✅ Modelo ajustado
 
 - **Función ajustada:**
 
@@ -209,7 +209,7 @@ y = \frac{-2.15712464104885}{x} + \frac{7.03694505106239}{\sqrt{x}}
 
 ---
 
-## 📌 Observación
+### 📌 Observación
 
 Este modelo logra un buen ajuste para la tendencia no lineal de los datos observados, combinando términos racionales con raíces cuadradas.
 

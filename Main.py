@@ -1,12 +1,12 @@
-from PolinomioTaylor import *
-from MetodoNewtonRaphson import *
+from Funciones.PolinomioTaylor import *
+from Funciones.MetodoNewtonRaphson import *
 import sympy as sym
-import Binarios
-from Biseccion import *
-from minimos_cuadrados import *
-from diferencias_finitas import *
-from Diferencias_divididadN import *
-from Interpolacion_Lagrange import *
+import Funciones.Binarios as Binarios
+from Funciones.Biseccion import *
+from Funciones.minimos_cuadrados import *
+from Funciones.diferencias_finitas import *
+from Funciones.Diferencias_divididadN import *
+from Funciones.Interpolacion_Lagrange import *
 import sys
 
 def mostrar_menu():
@@ -133,7 +133,7 @@ def ejecutar_terminal():
                     print("Opción inválida.")
         elif opcion == '5':
             print("\n--- MÉTODO DE BISECCIÓN ---")
-            from Biseccion import metodo_biseccion, graficar_biseccion
+            from Funciones.Biseccion import metodo_biseccion, graficar_biseccion
             try:
                 f = input("Ingrese la función f(x): ")
                 a = float(input("Ingrese el valor a (inicio del intervalo): "))
@@ -151,7 +151,7 @@ def ejecutar_terminal():
 
         elif opcion == '7':
             print("\n--- MÉTODO DE MÍNIMOS CUADRADOS ---")
-            from minimos_cuadrados import menu_minimos_cuadrados
+            from Funciones.minimos_cuadrados import menu_minimos_cuadrados
             menu_minimos_cuadrados()
         elif opcion ==  '8':
             Menu_diferencias_Divididas()
