@@ -315,7 +315,7 @@ def lanzar_lagrange():
 
     def ejecutar_interpolacion():
         try:
-            import Interpolacion_Lagrange as il
+            import Funciones.Interpolacion_Lagrange as il
             from importlib import reload
             reload(il)
 
