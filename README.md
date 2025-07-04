@@ -10,3 +10,6 @@
 | Karol Tatiana Burbano Nasner | 2359305 | Product Owner | [karol.burbano@correounivalle.edu.co]|
 | Juan Sebastian Aragon Campo  | 2359406 | Desarrollador | [juan.sebastian.aragon@correounivalle.edu.co]|
 | Sofía Carolina Quenoran      | 2359310 | Desarrollador | [sofia.quenoran@correounivalle.edu.co]|
+
+
+**Para una mejor visualización de la gui, instalar las fuentes que estan en la carpeta "Fuentes". Se deben abrir los archivos .ttf para la instalación.**
